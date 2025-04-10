@@ -11,6 +11,9 @@ body, html {
     font-family: Arial, sans-serif;
 }
 
+.main-container {
+    padding: 10px;
+}
 /* -------------------- header   ----------------- */
 
 header {
