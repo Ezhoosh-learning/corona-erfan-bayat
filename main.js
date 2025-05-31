@@ -1,97 +1,62 @@
+
 function toggleMenu() {
-    const navMenu = document.getElementById('nav-menu');
-    navMenu.classList.toggle('active');
+  const navMenu = document.getElementById("nav-menu");
+  navMenu.classList.toggle("active");
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    // Common chart options
-    const chartOptions = {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false, // Hide legend as per image
-            },
-            tooltip: {
-                enabled: true,
-                mode: 'index',
-                intersect: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                ticks: {
-                    font: {
-                        size: 10
-                    },
-                    stepSize: 10,
-                    padding: 5
-                },
-                grid: {
-                    display: true,
-                    color: 'rgba(0, 0, 0, 0.05)',
-                    drawBorder: false
-                }
-            },
-            x: {
-                ticks: {
-                    font: {
-                        size: 10
-                    },
-                    padding: 5
-                },
-                grid: {
-                    display: false
-                }
-            }
-        },
-        elements: {
-            line: {
-                borderWidth: 2
-            },
-            point: {
-                radius: 3,
-                hoverRadius: 5
-            }
+document.addEventListener("DOMContentLoaded", function () {
+  const customSelects = document.querySelectorAll(".custom-select");
+
+  customSelects.forEach((select) => {
+    const selected = select.querySelector(".selected");
+    const dropdownMenu = select.querySelector(".dropdown-menu");
+    const dropdownItems = select.querySelectorAll(".dropdown-item");
+
+    selected?.addEventListener("click", function (e) {
+      e.stopPropagation();
+      document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+        if (menu !== dropdownMenu) {
+          menu.style.display = "none";
         }
-    };
-
-    // Chart 1 (Total Cases)
-    const ctx1 = document.getElementById('chart1').getContext('2d');
-    new Chart(ctx1, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-            datasets: [{
-                label: 'Total Cases',
-                data: [20, 30, 25, 40, 35, 50, 45, 60],
-                borderColor: '#00d09c',
-                backgroundColor: 'rgba(0, 208, 156, 0.1)',
-                fill: false,
-                tension: 0.3
-            }]
-        },
-        options: chartOptions
+      });
+      if (dropdownMenu)
+        dropdownMenu.style.display =
+          dropdownMenu.style.display === "block" ? "none" : "block";
     });
 
-    // Chart 2 (Worldwide)
-    const ctx2 = document.getElementById('chart2').getContext('2d');
-    new Chart(ctx2, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-            datasets: [
-                {
-                    label: 'Total Cases',
-                    data: [50, 45, 40, 35, 30, 25, 20, 15],
-                    borderColor: '#ff0000', // Red for Worldwide cases as per image
-                    backgroundColor: 'rgba(255, 0, 0, 0.1)',
-                    fill: false,
-                    tension: 0.3
-                }
-            ]
-        },
-        options: chartOptions
+    dropdownItems.forEach((item) => {
+      item.addEventListener("click", function () {
+        const value = this.getAttribute("data-value");
+        const text = this.textContent.trim();
+        const img = this.querySelector("img");
+        const icon = this.querySelector("i");
+
+        selected.innerHTML = `
+          <span>
+            ${
+              img
+                ? `<img alt="" src="${img.src}"/> ${text}`
+                : icon
+                ? `<i class="${icon.className}"></i> ${text}`
+                : text
+            }
+          </span>
+          <span class="select-icon"><i class="bi bi-chevron-down"></i></span>
+        `;
+
+        dropdownMenu.style.display = "none";
+
+        const event = new CustomEvent("selectChange", {
+          detail: { value, text },
+        });
+        select.dispatchEvent(event);
+      });
     });
+  });
+
+  document.addEventListener("click", function () {
+    document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+      menu.style.display = "none";
+    });
+  });
 });
